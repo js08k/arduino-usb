@@ -38,7 +38,6 @@
 #define STR_MANUFACTURER	L"Your Name"
 #define STR_PRODUCT		L"Your USB Device"
 
-
 // Mac OS-X and Linux automatically load the correct drivers.  On
 // Windows, even though the driver is supplied by Microsoft, an
 // INF file is needed to load the driver.  These numbers need to
@@ -46,15 +45,12 @@
 #define VENDOR_ID		0x16C0
 #define PRODUCT_ID		0x0479
 
-
 // USB devices are supposed to implment a halt feature, which is
 // rarely (if ever) used.  If you comment this line out, the halt
 // code will be removed, saving 102 bytes of space (gcc 4.3.0).
 // This is not strictly USB compliant, but works with all major
 // operating systems.
 #define SUPPORT_ENDPOINT_HALT
-
-
 
 /**************************************************************************
  *
@@ -75,7 +71,7 @@
 static const uint8_t PROGMEM endpoint_config_table[] = {
 	0,
 	0,
-	1, EP_TYPE_INTERRUPT_IN,  EP_SIZE(DEBUG_TX_SIZE) | DEBUG_TX_BUFFER,
+    1, EP_TYPE_INTERRUPT_IN, EP_SIZE(DEBUG_TX_SIZE) | DEBUG_TX_BUFFER,
 	0
 };
 
@@ -94,74 +90,78 @@ static const uint8_t PROGMEM endpoint_config_table[] = {
 
 
 static uint8_t PROGMEM const device_descriptor[] = {
-	18,					// bLength
-	1,					// bDescriptorType
-	0x00, 0x02,				// bcdUSB
-	0,					// bDeviceClass
-	0,					// bDeviceSubClass
-	0,					// bDeviceProtocol
-	ENDPOINT0_SIZE,				// bMaxPacketSize0
+    18,                                 // bLength
+    1,                                  // bDescriptorType
+    0x00, 0x02,                         // bcdUSB
+    0,                                  // bDeviceClass
+    0,                                  // bDeviceSubClass
+    0,                                  // bDeviceProtocol
+    ENDPOINT0_SIZE,                     // bMaxPacketSize0
 	LSB(VENDOR_ID), MSB(VENDOR_ID),		// idVendor
 	LSB(PRODUCT_ID), MSB(PRODUCT_ID),	// idProduct
-	0x00, 0x01,				// bcdDevice
-	1,					// iManufacturer
-	2,					// iProduct
-	0,					// iSerialNumber
-	1					// bNumConfigurations
+    0x00, 0x01,                         // bcdDevice
+    1,                                  // iManufacturer
+    2,                                  // iProduct
+    0,                                  // iSerialNumber
+    1                                   // bNumConfigurations
 };
 
 static uint8_t PROGMEM const hid_report_descriptor[] = {
-	0x06, 0x31, 0xFF,			// Usage Page 0xFF31 (vendor defined)
-	0x09, 0x74,				// Usage 0x74
-	0xA1, 0x53,				// Collection 0x53
-	0x75, 0x08,				// report size = 8 bits
-	0x15, 0x00,				// logical minimum = 0
-	0x26, 0xFF, 0x00,			// logical maximum = 255
-	0x95, DEBUG_TX_SIZE,			// report count
-	0x09, 0x75,				// usage
-	0x81, 0x02,				// Input (array)
-	0xC0					// end collection
+    0x06, 0x31, 0xFF,                   // Usage Page 0xFF31 (vendor defined)
+    0x09, 0x74,                         // Usage 0x74
+    0xA1, 0x53,                         // Collection 0x53
+    0x75, 0x08,                         // report size = 8 bits
+    0x15, 0x00,                         // logical minimum = 0
+    0x26, 0xFF, 0x00,                   // logical maximum = 255
+    0x95, DEBUG_TX_SIZE,                // report count
+    0x09, 0x75,                         // usage
+    0x81, 0x02,                         // Input (array)
+    0xC0                                // end collection
 };
 
 #define CONFIG1_DESC_SIZE (9+9+9+7)
 #define HID_DESC2_OFFSET  (9+9)
 static uint8_t PROGMEM const config1_descriptor[CONFIG1_DESC_SIZE] = {
+
 	// configuration descriptor, USB spec 9.6.3, page 264-266, Table 9-10
-	9, 					// bLength;
-	2,					// bDescriptorType;
-	LSB(CONFIG1_DESC_SIZE),			// wTotalLength
+    9,                                  // bLength;
+    2,                                  // bDescriptorType;
+    LSB(CONFIG1_DESC_SIZE),             // wTotalLength
 	MSB(CONFIG1_DESC_SIZE),
-	1,					// bNumInterfaces
-	1,					// bConfigurationValue
-	0,					// iConfiguration
-	0xC0,					// bmAttributes
-	50,					// bMaxPower
+    1,                                  // bNumInterfaces
+    1,                                  // bConfigurationValue
+    0,                                  // iConfiguration
+    0xC0,                               // bmAttributes
+    50,                                 // bMaxPower
+
 	// interface descriptor, USB spec 9.6.5, page 267-269, Table 9-12
-	9,					// bLength
-	4,					// bDescriptorType
-	0,					// bInterfaceNumber
-	0,					// bAlternateSetting
-	1,					// bNumEndpoints
-	0x03,					// bInterfaceClass (0x03 = HID)
-	0x00,					// bInterfaceSubClass
-	0x00,					// bInterfaceProtocol
-	0,					// iInterface
+    9,                                  // bLength
+    4,                                  // bDescriptorType
+    0,                                  // bInterfaceNumber
+    0,                                  // bAlternateSetting
+    1,                                  // bNumEndpoints
+    0x03,                               // bInterfaceClass (0x03 = HID)
+    0x00,                               // bInterfaceSubClass
+    0x00,                               // bInterfaceProtocol
+    0,                                  // iInterface
+
 	// HID interface descriptor, HID 1.11 spec, section 6.2.1
-	9,					// bLength
-	0x21,					// bDescriptorType
-	0x11, 0x01,				// bcdHID
-	0,					// bCountryCode
-	1,					// bNumDescriptors
-	0x22,					// bDescriptorType
+    9,                                  // bLength
+    0x21,                               // bDescriptorType
+    0x11, 0x01,                         // bcdHID
+    0,                                  // bCountryCode
+    1,                                  // bNumDescriptors
+    0x22,                               // bDescriptorType
 	sizeof(hid_report_descriptor),		// wDescriptorLength
 	0,
+
 	// endpoint descriptor, USB spec 9.6.6, page 269-271, Table 9-13
-	7,					// bLength
-	5,					// bDescriptorType
-	DEBUG_TX_ENDPOINT | 0x80,		// bEndpointAddress
-	0x03,					// bmAttributes (0x03=intr)
-	DEBUG_TX_SIZE, 0,			// wMaxPacketSize
-	1					// bInterval
+    7,                                  // bLength
+    5,                                  // bDescriptorType
+    DEBUG_TX_ENDPOINT | 0x80,           // bEndpointAddress
+    0x03,                               // bmAttributes (0x03=intr)
+    DEBUG_TX_SIZE, 0,                   // wMaxPacketSize
+    1                                   // bInterval
 };
 
 // If you're desperate for a little extra code memory, these strings
@@ -204,6 +204,7 @@ static struct descriptor_list_struct {
 	{0x0301, 0x0409, (const uint8_t *)&string1, sizeof(STR_MANUFACTURER)},
 	{0x0302, 0x0409, (const uint8_t *)&string2, sizeof(STR_PRODUCT)}
 };
+
 #define NUM_DESC_LIST (sizeof(descriptor_list)/sizeof(struct descriptor_list_struct))
 
 
